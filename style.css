@@ -83,7 +83,7 @@ h1 {
     font-weight: 800;
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, var(--accent-primary) 0%, #818cf8 100%);
-  
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
