@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Estoque - POO & CRUD</title>
+    <title>Sistema de Estoque - POO & CRUD (V4)</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Fonte Inter para acabamento de alta precisão -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -16,50 +20,78 @@
         <form id="produto-form">
             <div class="form-group">
                 <label for="nome">Nome do produto:</label>
-                <input type="text" id="nome" placeholder="Ex. Notebook" />
+                <input type="text" id="nome" placeholder="Ex. Notebook" required />
             </div>
 
             <div class="form-group">
                 <label for="preco">Preço (R$):</label>
-                <input type="number" id="preco" step="0.01" placeholder="Ex. 3500.00" />
+                <input type="number" id="preco" step="0.01" placeholder="Ex. 3500.00" required />
             </div>
 
             <div class="form-group">
                 <label for="quantidade">Quantidade:</label>
-                <input type="number" id="quantidade" placeholder="Ex. 5" />
+                <input type="number" id="quantidade" placeholder="Ex. 5" required />
             </div>
 
-            <button type="submit" class="btn-primary">Adicionar Produto</button>
+            <button type="submit" class="btn-primary" id="btn-submit">
+                <span>➕</span> Adicionar Produto
+            </button>
         </form>
 
-
-        <!-- ALTERAÇÕES DA VERSÃO-->
+        <!-- BUSCA DINÂMICA (VERSÃO 4) -->
         <div class="busca-container">
-            <label for="campo-busca">Pesquisar no estoque:</label>
-            <input type="text" id="campo-busca" placeholder="Digite o nome do produto para filtrar ..."/>
+            <label for="campo-busca">🔍 Pesquisar no estoque:</label>
+            <input type="text" id="campo-busca" placeholder="Digite o nome do produto para filtrar em tempo real..."/>
         </div>
 
         <!-- Cabeçalho de Ações e Resumo -->
         <div class="resumo-container">
-            <h3 id="total-estoque">Total em Estoque: R$ 0,00</h3>
-            <button id="limpar-tabela" class="btn-danger">Limpar Tudo</button>
+            <h3 id="total-estoque">Total em Estoque: <span>R$ 0,00</span></h3>
+            <button id="limpar-tabela" class="btn-danger">🗑️ Limpar Tudo</button>
         </div>
 
         <!-- Tabela de Exibição -->
-        <table id="tabela-produtos">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Preço Un.</th>
-                    <th>Qtd.</th>
-                    <th>Subtotal</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- As linhas da tabela serão inseridas pelo JS -->
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table id="tabela-produtos">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Preço Un.</th>
+                        <th>Qtd.</th>
+                        <th>Subtotal</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- As linhas serão inseridas via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SEÇÃO DIFERENCIADA DOS DESENVOLVEDORES -->
+        <div class="devs-container">
+            <h3>Desenvolvido por</h3>
+            <div class="devs-cards">
+                <!-- Card Leonardo -->
+                <div class="dev-card">
+                    <img src="paizani.jpg" alt="Foto de Leonardo Paizani" class="dev-foto" onerror="this.src='https://ui-avatars.com/api/?name=Leonardo+Paizani&background=0284c7&color=fff'">
+                    <div class="dev-info">
+                        <span class="dev-nome">Leonardo Paizani</span>
+                        <span class="dev-cargo">Desenvolvedor</span>
+                    </div>
+                </div>
+
+                <!-- Card Luiz -->
+                <div class="dev-card">
+                    <img src="luiz..jpg" alt="Foto de Luiz Zampier" class="dev-foto" onerror="this.src='https://ui-avatars.com/api/?name=Luiz+Zampier&background=2563eb&color=fff'">
+                    <div class="dev-info">
+                        <span class="dev-nome">Luiz Zampier</span>
+                        <span class="dev-cargo">Desenvolvedor</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>

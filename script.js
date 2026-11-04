@@ -8,7 +8,6 @@ class Produto {
         this.quantidade = parseInt(quantidade);
     }
 
-    // Método que calcula o subtotal do produto
     calcularSubtotal() {
         return this.preco * this.quantidade;
     }
@@ -18,16 +17,9 @@ class Produto {
 // FASE 2: Gerenciamento de Estado (Memória e Edição)
 //
 const listaDeProdutos = [];
-
-// Estado auxiliar: null indica "Modo Inclusão", número indica "Modo Edição"
 let indiceEdicao = null;
-
-// Chave para persistência no navegador
 const CHAVE_STORAGE = "sistema_estoque_produtos";
 
-//
-// FASE 2.1: Persistência com localStorage
-//
 function salvarNoLocalStorage() {
     const listaEmTexto = JSON.stringify(listaDeProdutos);
     localStorage.setItem(CHAVE_STORAGE, listaEmTexto);
@@ -35,10 +27,8 @@ function salvarNoLocalStorage() {
 
 function carregarDoLocalStorage() {
     const dadosSalvos = localStorage.getItem(CHAVE_STORAGE);
-
     if (dadosSalvos) {
         const produtosObjetos = JSON.parse(dadosSalvos);
-
         produtosObjetos.forEach((prod) => {
             const produtoInstanciado = new Produto(prod.nome, prod.preco, prod.quantidade);
             listaDeProdutos.push(produtoInstanciado);
@@ -53,106 +43,106 @@ const formProduto = document.getElementById("produto-form");
 const btnSubmit = formProduto.querySelector("button[type='submit']");
 const btnLimparTudo = document.getElementById("limpar-tabela");
 const totalEstoqueEl = document.getElementById("total-estoque");
-
-// NOVIDADE V4: Captura do novo elemento input de busa //
-
 const campoBusca = document.getElementById("campo-busca");
+const inputNome = document.getElementById("nome");
+const inputPreco = document.getElementById("preco");
+const inputQuantidade = document.getElementById("quantidade");
 
 //
 // FASE 4: Função para Transferir Estado para Modo Edição
 //
 function prepararEdicao(index) {
     const produto = listaDeProdutos[index];
+    inputNome.value = produto.nome;
+    inputPreco.value = produto.preco;
+    inputQuantidade.value = produto.quantidade;
 
-    // 1. Preenche os campos do formulário com os dados do registro selecionado
-    document.getElementById("nome").value = produto.nome;
-    document.getElementById("preco").value = produto.preco;
-    document.getElementById("quantidade").value = produto.quantidade;
-
-    // 2. Atualiza a variável global de controle e altera o texto do botão
     indiceEdicao = index;
-    btnSubmit.textContent = "Salvar Alterações";
+    btnSubmit.textContent = "Salvar Alterações (Editar)";
     btnSubmit.classList.add("btn-warning");
 }
 
-// NOVIDADE V4: função inteligente de filtragem utilizando (.filter())//
-// a analise que foi digitada e retorna
-// apenas os prpdutos filtrados
-
-function obterProdutosFiltrados(){
-    //sanitizar o termo de busca e converter para minusculo
-        const termo = campoBusca.value.trim().toLowerCase();
-}
- // Se a busca estiver vazia, retorna lista completa
-if(termo){
-    return listaDeProdutos
-}
-
 function obterProdutosFiltrados() {
-    // Sanitizar o termo de busca e converter para minúsculo
     const termo = campoBusca.value.trim().toLowerCase();
-
-    // Se a busca estiver vazia, retorna a lista completa
     if (!termo) {
         return listaDeProdutos;
     }
-
-    // Usa o método de alta performance .filter() para buscar no array
     return listaDeProdutos.filter(produto => 
         produto.nome.toLowerCase().includes(termo)
     );
 }
 
-
 //
-// [FASE 5: Escuta de Eventos
+// FASE 5: Escuta de Eventos
 //
+inputNome.addEventListener("input", function() {
+    const nomeDigitado = inputNome.value.trim().toLowerCase();
+    
+    if (!nomeDigitado) {
+        if (indiceEdicao !== null) {
+            indiceEdicao = null;
+            btnSubmit.textContent = "Adicionar Produto";
+            btnSubmit.classList.remove("btn-warning");
+            inputPreco.value = "";
+            inputQuantidade.value = "";
+        }
+        return;
+    }
 
-// 1. Evento Submit do Formulário com Validações (Guard Clauses) e Fluxo Update
+    const indexEncontrado = listaDeProdutos.findIndex(
+        p => p.nome.toLowerCase() === nomeDigitado
+    );
+
+    if (indexEncontrado !== -1) {
+        prepararEdicao(indexEncontrado);
+    } else {
+        if (indiceEdicao !== null) {
+            indiceEdicao = null;
+            btnSubmit.textContent = "Adicionar Produto";
+            btnSubmit.classList.remove("btn-warning");
+            inputPreco.value = "";
+            inputQuantidade.value = "";
+        }
+    }
+});
+
+campoBusca.addEventListener("input", function() {
+    atualizarInterface();
+});
+
 formProduto.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Sanitização e Captura dos Valores
-    const nome = document.getElementById("nome").value.trim();
-    const preco = parseFloat(document.getElementById("preco").value);
-    const quantidade = parseInt(document.getElementById("quantidade").value);
+    const nome = inputNome.value.trim();
+    const preco = parseFloat(inputPreco.value);
+    const quantidade = parseInt(inputQuantidade.value);
 
-    // Guard Clause 1: Validação do nome
     if (!nome) {
         alert("Por favor, informe um nome válido para o produto.");
         return;
     }
 
-    // Guard Clause 2: Checagem de Limites Numéricos
     if (isNaN(preco) || preco <= 0 || isNaN(quantidade) || quantidade <= 0) {
         alert("O preço e a quantidade devem ser valores numéricos maiores que zero.");
         return;
     }
 
-    // Instancia o novo produto com dados validados
     const produtoValido = new Produto(nome, preco, quantidade);
 
-    // Lógica de Persistência em Memória: Inclusão vs. Alteração (Update)
     if (indiceEdicao === null) {
-        // Modo Inclusão
         listaDeProdutos.push(produtoValido);
     } else {
-        // Modo Edição (Update)
         listaDeProdutos[indiceEdicao] = produtoValido;
-        
-        // Restaura o estado original de cadastro
         indiceEdicao = null;
         btnSubmit.textContent = "Adicionar Produto";
         btnSubmit.classList.remove("btn-warning");
     }
 
-    // Sincroniza com localStorage, limpa o formulário e atualiza a interface
     salvarNoLocalStorage();
     formProduto.reset();
     atualizarInterface();
 });
 
-// 2. Limpar Toda a Tabela
 btnLimparTudo.addEventListener("click", function () {
     if (listaDeProdutos.length === 0) {
         alert("A tabela já está vazia!");
@@ -163,7 +153,6 @@ btnLimparTudo.addEventListener("click", function () {
         listaDeProdutos.length = 0;
         localStorage.removeItem(CHAVE_STORAGE);
         
-        // Restaura estado se estivesse editando
         indiceEdicao = null;
         btnSubmit.textContent = "Adicionar Produto";
         btnSubmit.classList.remove("btn-warning");
@@ -179,7 +168,6 @@ btnLimparTudo.addEventListener("click", function () {
 function removerProduto(index) {
     listaDeProdutos.splice(index, 1);
 
-    // Caso o item excluído seja o que estava em edição, reseta o estado
     if (indiceEdicao === index) {
         indiceEdicao = null;
         btnSubmit.textContent = "Adicionar Produto";
@@ -203,7 +191,10 @@ function renderizarTabela() {
     const tabelaBody = document.querySelector("#tabela-produtos tbody");
     tabelaBody.innerHTML = "";
 
-    listaDeProdutos.forEach((produto, index) => {
+    const produtosParaExibir = obterProdutosFiltrados();
+
+    produtosParaExibir.forEach((produto) => {
+        const indexReal = listaDeProdutos.indexOf(produto);
         const linha = document.createElement("tr");
 
         linha.innerHTML = `
@@ -217,12 +208,11 @@ function renderizarTabela() {
             </td>
         `;
 
-        // Eventos dos botões da coluna de ações
         const btnEditar = linha.querySelector(".btn-editar");
-        btnEditar.addEventListener("click", () => prepararEdicao(index));
+        btnEditar.addEventListener("click", () => prepararEdicao(indexReal));
 
         const btnRemover = linha.querySelector(".btn-remover");
-        btnRemover.addEventListener("click", () => removerProduto(index));
+        btnRemover.addEventListener("click", () => removerProduto(indexReal));
 
         tabelaBody.appendChild(linha);
     });
