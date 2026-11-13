@@ -1,58 +1,106 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Estoque - POO & CRUD (V4)</title>
+
+    <title>STOCKFLOW - Controle de Estoque</title>
+
     <link rel="stylesheet" href="style.css">
-    <!-- Fonte Inter para acabamento de alta precisão -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
+
+    <main class="container">
+
         <h1>Cadastro de Produtos</h1>
 
-        <!-- Formulário de Entrada -->
-        <form id="produto-form">
+        <form id="produto-form" novalidate>
+
             <div class="form-group">
                 <label for="nome">Nome do produto:</label>
-                <input type="text" id="nome" placeholder="Ex. Notebook" required />
+
+                <input
+                    type="text"
+                    id="nome"
+                    list="sugestoes-produtos"
+                    placeholder="Digite o nome do produto"
+                    autocomplete="off"
+                    required
+                >
+
+                <datalist id="sugestoes-produtos"></datalist>
             </div>
 
             <div class="form-group">
                 <label for="preco">Preço (R$):</label>
-                <input type="number" id="preco" step="0.01" placeholder="Ex. 3500.00" required />
+
+                <input
+                    type="number"
+                    id="preco"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="Ex. 3500.00"
+                    required
+                >
             </div>
 
             <div class="form-group">
                 <label for="quantidade">Quantidade:</label>
-                <input type="number" id="quantidade" placeholder="Ex. 5" required />
+
+                <input
+                    type="number"
+                    id="quantidade"
+                    min="1"
+                    step="1"
+                    placeholder="Ex. 5"
+                    required
+                >
             </div>
 
+            <div id="mensagem-erro" class="mensagem-erro" role="alert" aria-live="assertive"></div>
+
+            <div id="mensagem-sucesso" class="mensagem-sucesso" role="status" aria-live="polite"></div>
+
             <button type="submit" class="btn-primary" id="btn-submit">
-                <span>➕</span> Adicionar Produto
+                ➕ Adicionar Produto
             </button>
+
         </form>
 
-        <!-- BUSCA DINÂMICA (VERSÃO 4) -->
-        <div class="busca-container">
+        <section class="busca-container">
+
             <label for="campo-busca">🔍 Pesquisar no estoque:</label>
-            <input type="text" id="campo-busca" placeholder="Digite o nome do produto para filtrar em tempo real..."/>
-        </div>
 
-        <!-- Cabeçalho de Ações e Resumo -->
-        <div class="resumo-container">
-            <h3 id="total-estoque">Total em Estoque: <span>R$ 0,00</span></h3>
-            <button id="limpar-tabela" class="btn-danger">🗑️ Limpar Tudo</button>
-        </div>
+            <input
+                type="search"
+                id="campo-busca"
+                placeholder="Digite o nome do produto para filtrar em tempo real..."
+            >
 
-        <!-- Tabela de Exibição -->
+        </section>
+
+        <section class="resumo-container">
+
+            <h3 id="total-estoque">
+                Total em Estoque: <span>R$ 0,00</span>
+            </h3>
+
+            <button id="limpar-tabela" class="btn-danger" type="button">
+                🗑️ Limpar Tudo
+            </button>
+
+        </section>
+
         <div class="table-wrapper">
+
             <table id="tabela-produtos">
+
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -62,39 +110,146 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- As linhas serão inseridas via JavaScript -->
-                </tbody>
+
+                <tbody></tbody>
+
             </table>
+
+            <p id="estoque-vazio" class="mensagem-vazia" hidden>
+                Nenhum produto cadastrado ou encontrado.
+            </p>
+
         </div>
 
-        <!-- SEÇÃO DIFERENCIADA DOS DESENVOLVEDORES -->
-        <div class="devs-container">
+        <div class="bootstrap-container">
+
+            <button type="button" id="btn-bootstrap" class="btn-bootstrap">
+                💡 Ver Conceito Bootstrap
+            </button>
+
+        </div>
+
+        <section class="devs-container">
+
             <h3>Desenvolvido por</h3>
+
             <div class="devs-cards">
-                <!-- Card Leonardo -->
+
                 <div class="dev-card">
-                    <img src="paizani.jpg" alt="Foto de Leonardo Paizani" class="dev-foto" onerror="this.src='https://ui-avatars.com/api/?name=Leonardo+Paizani&background=0284c7&color=fff'">
+
+                    <img
+                        src="paizani.jpg"
+                        alt="Foto de Leonardo Paizani"
+                        class="dev-foto"
+                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Leonardo+Paizani&background=0284c7&color=fff'"
+                    >
+
                     <div class="dev-info">
                         <span class="dev-nome">Leonardo Paizani</span>
                         <span class="dev-cargo">Desenvolvedor</span>
                     </div>
+
                 </div>
 
-                <!-- Card Luiz -->
                 <div class="dev-card">
-                    <img src="luiz..jpg" alt="Foto de Luiz Zampier" class="dev-foto" onerror="this.src='https://ui-avatars.com/api/?name=Luiz+Zampier&background=2563eb&color=fff'">
+
+                    <img
+                        src="luiz..jpg"
+                        alt="Foto de Luiz Zampier"
+                        class="dev-foto"
+                        onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Luiz+Zampier&background=2563eb&color=fff'"
+                    >
+
                     <div class="dev-info">
                         <span class="dev-nome">Luiz Zampier</span>
                         <span class="dev-cargo">Desenvolvedor</span>
                     </div>
+
                 </div>
+
             </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+
+    <div
+        id="modal-confirmacao"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-confirmacao"
+        aria-describedby="texto-confirmacao"
+        hidden
+    >
+
+        <div class="modal-conteudo">
+
+            <h2 id="titulo-confirmacao">⚠️ Confirmar exclusão</h2>
+
+            <p id="texto-confirmacao">
+                Tem certeza de que deseja excluir este registro?
+            </p>
+
+            <div class="modal-acoes">
+
+                <button type="button" id="btn-cancelar" class="btn-cancelar">
+                    Cancelar
+                </button>
+
+                <button type="button" id="btn-confirmar" class="btn-danger">
+                    Confirmar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL BOOTSTRAP -->
+
+    <div
+        id="modal-bootstrap"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-bootstrap"
+        hidden
+    >
+
+        <div class="modal-conteudo">
+
+            <h2 id="titulo-bootstrap">💡 Conceito Bootstrap</h2>
+
+            <p>
+                Bootstrap é uma biblioteca de código aberto que facilita
+                a criação de interfaces modernas e responsivas.
+            </p>
+
+            <p>
+                Ela oferece componentes prontos, como botões, formulários,
+                tabelas, alertas e janelas modais.
+            </p>
+
+            <p>
+                Neste projeto, poderíamos utilizar o Bootstrap para acelerar
+                a construção da interface, padronizar os elementos visuais
+                e facilitar a adaptação para celulares. Nesta versão,
+                os estilos foram feitos com CSS próprio.
+            </p>
+
+            <button type="button" id="btn-fechar-bootstrap" class="btn-primary">
+                Entendi
+            </button>
+
         </div>
 
     </div>
 
     <script src="script.js"></script>
-</body>
 
+</body>
 </html>
